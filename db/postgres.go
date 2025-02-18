@@ -29,7 +29,7 @@ func (p *Postgres) Connect(dsn string) error {
 }
 
 func (p *Postgres) Init() error {
-	return p.DB.AutoMigrate(&models.User{})
+	return p.DB.AutoMigrate(&models.User{}, &models.Todo{})
 }
 
 

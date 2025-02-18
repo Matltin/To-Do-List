@@ -38,3 +38,11 @@ func RandomEmail() string {
 func RandRange(min, max int) int {
 	return rand.Intn(max-min) + min
 }
+
+func RandomTitle() string {
+	return RandomString(RandRange(1, 10))
+}
+
+func RandomDescription() string {
+	return RandomString(RandRange(1, 10))
+}
