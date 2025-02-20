@@ -5,12 +5,12 @@ import (
 )
 
 type Todo struct {
-	ID          uint `gorm:"primarykey"`
-	UserID      uint `gorm:"not null"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	FinishedAt  time.Time `gorm:"type:date"`
-	Title       string    `gorm:"not null"`
-	Description string    `gorm:"not null"`
-	IsDone      bool      `gorm:"Defualt:false"`
+	ID          uint      `json:"id" gorm:"primarykey"`
+	UserID      uint      `json:"user_id" gorm:"not null"`
+	CreatedAt   time.Time `json:"create_at"`
+	UpdatedAt   time.Time `json:"update_at"`
+	FinishedAt  time.Time `json:"finished_at" gorm:"type:date"`
+	Title       string    `json:"title" gorm:"not null"`
+	Description string    `json:"description" gorm:"not null"`
+	IsDone      bool      `json:"is_done" gorm:"Defualt:false"`
 }

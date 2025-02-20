@@ -9,16 +9,16 @@ import (
 
 type Payload struct {
 	ID        uuid.UUID `json:"id"`
-	Username  string    `json:"username"`
+	UserID    uint      `json:"user_id"`
 	Email     string    `json:"email"`
 	IssueAt   time.Time `json:"issue_at"`
 	ExpiredAt time.Time `json:"Expired_at"`
 }
 
-func NewPayload(username, email string, duration time.Duration) *Payload {
+func NewPayload(id uint, email string, duration time.Duration) *Payload {
 	return &Payload{
 		ID:        uuid.New(),
-		Username:  username,
+		UserID:    id,
 		Email:     email,
 		IssueAt:   time.Now(),
 		ExpiredAt: time.Now().Add(duration),

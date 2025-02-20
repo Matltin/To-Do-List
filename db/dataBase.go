@@ -11,5 +11,6 @@ type DataBase interface {
 	UpdateTodo(arg UpdateTodoParams) (*models.Todo, error)
 	DeleteTodo(arg DeleteTodeParams) error
 	GetTodoByID(id uint) (*models.Todo, error)
-	GetTodosByID(arg GetTodosByIDParams) ([]models.Todo, error) 
+	GetTodosByID(arg GetTodosByIDParams) ([]models.Todo, error)
+	CheckUserExists(email string) (bool, error)
 }

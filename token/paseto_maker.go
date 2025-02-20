@@ -2,6 +2,7 @@ package token
 
 import (
 	"time"
+	"to_do_list/util"
 
 	"github.com/o1egl/paseto"
 )
@@ -14,7 +15,7 @@ type Paseto struct {
 func NewPasetoMaker(symmetrickey string) (*Paseto, error) {
 
 	if len(symmetrickey) < 4 {
-		return nil, ErrInvalidKey
+		return nil, util.ErrInvalidKey
 	}
 
 	return &Paseto{
@@ -23,26 +24,27 @@ func NewPasetoMaker(symmetrickey string) (*Paseto, error) {
 	}, nil
 }
 
-func (p *Paseto) CreateToken(username, email string, duration time.Duration) (string, error) {
+func (p *Paseto) CreateToken(id uint, email string, duration time.Duration) (string, error) {
 
-	payload := NewPayload(username, email, duration)
+	payload := NewPayload(id, email, duration)
 
-	return p.paseto.Encrypt(p.symmetrickey, payload, nil)
+	token, err := p.paseto.Encrypt(p.symmetrickey, payload, nil)
+
+	return token, err
 }
 
-func (p *Paseto) VerifyToken(token string) error {
+func (p *Paseto) VerifyToken(token string) (*Payload, error) {
 	payload := Payload{}
 
 	err := p.paseto.Decrypt(token, p.symmetrickey, &payload, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	err = payload.Valid()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return &payload, nil
 }
-
