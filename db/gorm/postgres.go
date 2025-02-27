@@ -1,22 +1,22 @@
 package db
 
 import (
+	"to_do_list/db"
 	"to_do_list/models"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-
 type Postgres struct {
 	DB *gorm.DB
 }
 
-func NewPostgres() DataBase {
+func NewPostgres() db.DataBase {
 	return &Postgres{
 		DB: &gorm.DB{},
 	}
-} 
+}
 
 func (p *Postgres) Connect(dsn string) error {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -31,5 +31,3 @@ func (p *Postgres) Connect(dsn string) error {
 func (p *Postgres) Init() error {
 	return p.DB.AutoMigrate(&models.User{}, &models.Todo{})
 }
-
-

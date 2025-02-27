@@ -4,10 +4,11 @@ import (
 	"log"
 	"os"
 	"testing"
+	"to_do_list/db"
 	"to_do_list/util"
 )
 
-var p DataBase
+var p db.DataBase
 
 func TestMain(m *testing.M) {
 

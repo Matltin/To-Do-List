@@ -14,3 +14,33 @@ type DataBase interface {
 	GetTodosByID(arg GetTodosByIDParams) ([]models.Todo, error)
 	CheckUserExists(email string) (bool, error)
 }
+
+type CreateUserParams struct {
+	Username string
+	Password string
+	Email    string
+}
+
+type CreateTodoParams struct {
+	UserID      uint
+	Title       string
+	Description string
+}
+
+type UpdateTodoParams struct {
+	ID          uint
+	UserID      uint
+	Title       string
+	Description string
+}
+
+type DeleteTodeParams struct {
+	ID     uint
+	UserID uint
+}
+
+type GetTodosByIDParams struct {
+	UserID uint
+	Page   int
+	Limit  int
+}

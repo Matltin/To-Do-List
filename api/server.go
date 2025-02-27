@@ -32,7 +32,7 @@ func setupServer(ser Server) {
 	router.POST("/api/auth/register", ser.RegisterUser)
 	router.POST("/api/auth/login", ser.LoginUser)
 	router.GET("/api/auth/me")
-	router.POST("/api/auth/refresh") //for the session(refresh) token
+	router.POST("/api/auth/refresh") // for the session(refresh) token
 	router.POST("/api/auth/logout")  // for the session(refresh) token
 
 	authRouter := router.Group("/", authMiddleware(ser.Maker))

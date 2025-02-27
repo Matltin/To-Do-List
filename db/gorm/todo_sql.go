@@ -2,16 +2,11 @@ package db
 
 import (
 	"fmt"
+	"to_do_list/db"
 	"to_do_list/models"
 )
 
-type CreateTodoParams struct {
-	UserID      uint
-	Title       string
-	Description string
-}
-
-func (p *Postgres) CreateTodo(arg CreateTodoParams) (*models.Todo, error) {
+func (p *Postgres) CreateTodo(arg db.CreateTodoParams) (*models.Todo, error) {
 	todo := models.Todo{
 		UserID:      arg.UserID,
 		Title:       arg.Title,
@@ -37,14 +32,7 @@ func (p *Postgres) GetTodoByID(id uint) (*models.Todo, error) {
 	return &todo, nil
 }
 
-type UpdateTodoParams struct {
-	ID          uint
-	UserID      uint
-	Title       string
-	Description string
-}
-
-func (p *Postgres) UpdateTodo(arg UpdateTodoParams) (*models.Todo, error) {
+func (p *Postgres) UpdateTodo(arg db.UpdateTodoParams) (*models.Todo, error) {
 	todo := models.Todo{}
 
 	result := p.DB.Where("id = ? AND user_id = ?", arg.ID, arg.UserID).First(&todo)
@@ -68,12 +56,7 @@ func (p *Postgres) UpdateTodo(arg UpdateTodoParams) (*models.Todo, error) {
 	return &todo, nil
 }
 
-type DeleteTodeParams struct {
-	ID     uint
-	UserID uint
-}
-
-func (p *Postgres) DeleteTodo(arg DeleteTodeParams) error {
+func (p *Postgres) DeleteTodo(arg db.DeleteTodeParams) error {
 	todo := models.Todo{}
 
 	result := p.DB.Where("id = ? AND user_id = ?", arg.ID, arg.UserID).First(&todo)
@@ -89,13 +72,7 @@ func (p *Postgres) DeleteTodo(arg DeleteTodeParams) error {
 	return nil
 }
 
-type GetTodosByIDParams struct {
-	UserID uint
-	Page   int
-	Limit  int
-}
-
-func (p *Postgres) GetTodosByID(arg GetTodosByIDParams) ([]models.Todo, error) {
+func (p *Postgres) GetTodosByID(arg db.GetTodosByIDParams) ([]models.Todo, error) {
 	var todos []models.Todo
 
 	offset := (arg.Page - 1) * arg.Limit
@@ -105,7 +82,7 @@ func (p *Postgres) GetTodosByID(arg GetTodosByIDParams) ([]models.Todo, error) {
 		Limit(arg.Limit).
 		Offset(offset).
 		Find(&todos)
-	
+
 	if result.Error != nil {
 		return nil, result.Error
 	}

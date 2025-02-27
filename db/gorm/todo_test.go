@@ -2,6 +2,7 @@ package db
 
 import (
 	"testing"
+	"to_do_list/db"
 	"to_do_list/models"
 	"to_do_list/util"
 
@@ -9,8 +10,8 @@ import (
 )
 
 func createRandomTodo(t *testing.T, id uint) *models.Todo {
-	arg := CreateTodoParams{
-		UserID: id,
+	arg := db.CreateTodoParams{
+		UserID:      id,
 		Title:       util.RandomTitle(),
 		Description: util.RandomDescription(),
 	}
@@ -33,7 +34,7 @@ func TestDeleteTodo(t *testing.T) {
 	user := createRandomUser(t)
 	todo := createRandomTodo(t, user.ID)
 
-	arg := DeleteTodeParams{
+	arg := db.DeleteTodeParams{
 		ID:     todo.ID,
 		UserID: todo.UserID,
 	}
@@ -50,7 +51,7 @@ func TestUpdateTodo(t *testing.T) {
 	user := createRandomUser(t)
 	todo := createRandomTodo(t, user.ID)
 
-	arg := UpdateTodoParams{
+	arg := db.UpdateTodoParams{
 		ID:          todo.ID,
 		UserID:      todo.UserID,
 		Title:       util.RandomTitle(),
@@ -73,10 +74,10 @@ func TestGetTodosByID(t *testing.T) {
 	todo3 := createRandomTodo(t, user.ID)
 	todo4 := createRandomTodo(t, user.ID)
 
-	arg := GetTodosByIDParams {
+	arg := db.GetTodosByIDParams{
 		UserID: user.ID,
-		Page: 1,
-		Limit: 2,
+		Page:   1,
+		Limit:  2,
 	}
 
 	todos, err := p.GetTodosByID(arg)
@@ -85,10 +86,10 @@ func TestGetTodosByID(t *testing.T) {
 	require.Equal(t, todos[0].Title, todo1.Title)
 	require.Equal(t, todos[1].Title, todo2.Title)
 
-	arg = GetTodosByIDParams {
+	arg = db.GetTodosByIDParams{
 		UserID: user.ID,
-		Page: 2,
-		Limit: 2,
+		Page:   2,
+		Limit:  2,
 	}
 
 	todos, err = p.GetTodosByID(arg)
@@ -97,10 +98,10 @@ func TestGetTodosByID(t *testing.T) {
 	require.Equal(t, todos[0].Title, todo3.Title)
 	require.Equal(t, todos[1].Title, todo4.Title)
 
-	arg = GetTodosByIDParams {
+	arg = db.GetTodosByIDParams{
 		UserID: user.ID,
-		Page: 3,
-		Limit: 2,
+		Page:   3,
+		Limit:  2,
 	}
 
 	todos, err = p.GetTodosByID(arg)

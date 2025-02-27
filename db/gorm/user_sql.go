@@ -1,18 +1,13 @@
 package db
 
 import (
+	"to_do_list/db"
 	"to_do_list/models"
 
 	"gorm.io/gorm"
 )
 
-type CreateUserParams struct {
-	Username string
-	Password string
-	Email    string
-}
-
-func (p *Postgres) CreateUser(arg CreateUserParams) (*models.User, error) {
+func (p *Postgres) CreateUser(arg db.CreateUserParams) (*models.User, error) {
 	user := models.User{
 		Username: arg.Username,
 		Password: arg.Password,

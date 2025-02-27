@@ -2,6 +2,7 @@ package db
 
 import (
 	"testing"
+	"to_do_list/db"
 	"to_do_list/models"
 	"to_do_list/util"
 
@@ -9,7 +10,7 @@ import (
 )
 
 func createRandomUser(t *testing.T) *models.User {
-	arg := CreateUserParams{
+	arg := db.CreateUserParams{
 		Username: util.RandomUsername(),
 		Password: util.RandomPassword(),
 		Email:    util.RandomEmail(),
@@ -36,7 +37,5 @@ func TestGetUser(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, user)
 	require.NotZero(t, user.ID)
-	
+
 }
-
-
