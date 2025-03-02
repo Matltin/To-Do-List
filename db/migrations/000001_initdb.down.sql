@@ -1,0 +1,6 @@
+ALTER TABLE "todos" DROP CONSTRAINT IF EXISTS fk_user;
+
+DROP INDEX IF EXISTS todos_user_id_idx;
+
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS todos;

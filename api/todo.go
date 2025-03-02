@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"strconv"
-	"to_do_list/db"
+	"to_do_list/db/sqlc"
 	"to_do_list/token"
 	"to_do_list/util"
 
@@ -27,13 +27,13 @@ func (ser *Server) CreateTodo(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPyloadKey).(*token.Payload)
 
-	arg := db.CreateTodoParams{
-		UserID:      authPayload.UserID,
+	arg := sqlc.CreateTodoParams{
+		UserID:      int32(authPayload.UserID),
 		Title:       req.Title,
 		Description: req.Description,
 	}
 
-	todo, err := ser.DB.CreateTodo(arg)
+	todo, err := ser.store.CreateTodo(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -67,14 +67,14 @@ func (ser *Server) UpdateTodo(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPyloadKey).(*token.Payload)
 
-	arg := db.UpdateTodoParams{
-		ID:          uint(todoID),
-		UserID:      authPayload.UserID,
+	arg := sqlc.UpdateTodoParams{
+		ID:          int64(todoID),
+		UserID:      int32(authPayload.UserID),
 		Title:       req.Title,
 		Description: req.Description,
 	}
 
-	todo, err := ser.DB.UpdateTodo(arg)
+	todo, err := ser.store.UpdateTodo(ctx, arg)
 	if err != nil {
 		if err == util.ErrActivityDone {
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -98,12 +98,12 @@ func (ser *Server) DeleteTodo(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPyloadKey).(*token.Payload)
 
-	arg := db.DeleteTodeParams{
-		ID:     uint(todoID),
-		UserID: authPayload.UserID,
+	arg := sqlc.DeleteTodoParams{
+		ID:     int64(todoID),
+		UserID: int32(authPayload.UserID),
 	}
 
-	err = ser.DB.DeleteTodo(arg)
+	err = ser.store.DeleteTodo(ctx, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -132,13 +132,13 @@ func (ser *Server) GetTodos(ctx *gin.Context) {
 
 	authPayload := ctx.MustGet(authorizationPyloadKey).(*token.Payload)
 
-	arg := db.GetTodosByIDParams{
-		UserID: authPayload.UserID,
-		Page:   page,
-		Limit:  limit,
+	arg := sqlc.GetTodosByIDParams{
+		UserID: int32(authPayload.UserID),
+		Offset: int32(page),
+		Limit:  int32(limit),
 	}
 
-	todos, err := ser.DB.GetTodosByID(arg)
+	todos, err := ser.store.GetTodosByID(ctx, arg)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))

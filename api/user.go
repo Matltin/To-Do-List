@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 	"time"
-	"to_do_list/db"
+	"to_do_list/db/sqlc"
 	"to_do_list/util"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +33,7 @@ func (ser *Server) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	exists, err := ser.DB.CheckUserExists(req.Email)
+	exists, err := ser.store.CheckUserExists(ctx, req.Email)
 	if exists || err != nil {
 		if exists {
 			ctx.JSON(http.StatusConflict, errorResponse(errors.New("user with this email already exist")))
@@ -50,13 +50,13 @@ func (ser *Server) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.CreateUserParams{
-		Username: req.Username,
-		Password: hashedPassword,
-		Email:    req.Email,
+	arg := sqlc.CreateUserParams{
+		Username:       req.Username,
+		HashedPassword: hashedPassword,
+		Email:          req.Email,
 	}
 
-	user, err := ser.DB.CreateUser(arg)
+	user, err := ser.store.CreateUser(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -69,14 +69,14 @@ func (ser *Server) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	token, err := ser.Maker.CreateToken(user.ID, user.Email, accessTokenDuration)
+	token, err := ser.Maker.CreateToken(uint(user.ID), user.Email, accessTokenDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	res := UserResponse{
-		ID:       user.ID,
+		ID:       uint(user.ID),
 		Username: user.Username,
 		Email:    user.Email,
 		Token:    token,
@@ -98,7 +98,7 @@ func (ser *Server) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := ser.DB.GetUser(req.Email)
+	user, err := ser.store.GetUser(ctx, req.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -108,7 +108,7 @@ func (ser *Server) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	err = util.CheckPassword(req.Password, user.Password)
+	err = util.CheckPassword(req.Password, user.HashedPassword)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -121,14 +121,14 @@ func (ser *Server) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	token, err := ser.Maker.CreateToken(user.ID, user.Email, accessTokenDuration)
+	token, err := ser.Maker.CreateToken(uint(user.ID), user.Email, accessTokenDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
 	res := UserResponse{
-		ID:       user.ID,
+		ID:       uint(user.ID),
 		Username: user.Username,
 		Email:    user.Email,
 		Token:    token,

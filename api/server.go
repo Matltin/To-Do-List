@@ -1,21 +1,21 @@
 package api
 
 import (
-	"to_do_list/db"
+	"to_do_list/db/sqlc"
 	"to_do_list/token"
 
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	DB     db.DataBase
+	store  sqlc.Store
 	Router *gin.Engine
 	Maker  token.Paseto
 }
 
-func NewServer(db db.DataBase, maker token.Paseto) Server {
+func NewServer(store sqlc.Store, maker token.Paseto) Server {
 	ser := Server{
-		DB:     db,
+		store:  store,
 		Router: gin.Default(),
 		Maker:  maker,
 	}
@@ -31,6 +31,7 @@ func setupServer(ser Server) {
 	// /api/auth/
 	router.POST("/api/auth/register", ser.RegisterUser)
 	router.POST("/api/auth/login", ser.LoginUser)
+
 	router.GET("/api/auth/me")
 	router.POST("/api/auth/refresh") // for the session(refresh) token
 	router.POST("/api/auth/logout")  // for the session(refresh) token
